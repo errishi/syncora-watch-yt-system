@@ -1,0 +1,21 @@
+{
+  "name": "syncora-server",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Rishikesh Singh",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.76",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.0",
+    "socket.io": "^4.8.4",
+    "svix": "^2.7.0"
+  }
+}

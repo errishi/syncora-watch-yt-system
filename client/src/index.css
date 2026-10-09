@@ -1,0 +1,110 @@
+@import '@clerk/ui/themes/shadcn.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Code Craft Premium Dark Mode Colors */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Theme colors from Logo */
+    --primary: 140 49% 61%;
+    --primary-foreground: 138 26% 15%;
+
+    --secondary: 79 74% 79%;
+    --secondary-foreground: 138 26% 15%;
+
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 240 10% 12%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 10% 12%;
+    --input: 240 10% 12%;
+    --ring: 140 49% 61%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* Custom Utilities for glassmorphism in light mode */
+.glass {
+  @apply bg-white/60 backdrop-blur-md border border-foreground/5 shadow-xl;
+}
+
+.background-dots {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    hsl(var(--primary) / 0.2) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, black, transparent 75%);
+}
+
+@layer utilities {
+  /* Premium Dark Mode Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Firefox Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+}
+
+/* Force Clerk UserButton Custom Items to match custom shadcn styling */
+.cl-userButtonPopoverActionButton, .cl-userButtonPopoverCustomItemButton { 
+  padding: 0.5rem 0.75rem !important; 
+  border-radius: 0.375rem !important;
+  transition: all 0.15s ease !important;
+}
+.cl-userButtonPopoverActionButton:hover, .cl-userButtonPopoverCustomItemButton:hover { 
+  background-color: rgba(255,255,255,0.1) !important; 
+}
+.cl-userButtonPopoverActionButton *, .cl-userButtonPopoverCustomItemButton * { 
+  color: white !important; 
+}
+.cl-userButtonPopoverCustomItemButton svg {
+  margin-right: 0.5rem !important; /* Ensure perfect icon spacing */
+}

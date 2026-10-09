@@ -1,0 +1,32 @@
+import React from 'react'
+import { motion } from 'framer-motion';
+import { useUser } from '@clerk/react';
+import { BadgeCheck } from 'lucide-react';
+
+const Header = () => {
+    const { user } = useUser();
+    const premiumEasing = [0.25, 0.1, 0.25, 1];
+    
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: premiumEasing }}
+            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-white/20"
+        >
+            <div>
+                <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">Welcome back, {user.firstName || user.username}!</h1>
+                <p className="text-muted-foreground">Manage your watch parties, track history, and check your stats.</p>
+            </div>
+            <div className="flex items-center gap-4 bg-card/30 border border-white/20 p-2 pr-6 rounded-full backdrop-blur-md">
+                <img src={user.imageUrl} alt="Profile" className="rounded-full w-12 h-12" />
+                <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-foreground">{user.firstName || user.username} {user.lastName}</span>
+                    <span className="text-xs text-primary flex items-center gap-1">Verified <BadgeCheck className="h-3 w-3" /> </span>
+                </div>
+            </div>
+        </motion.div>
+    )
+}
+
+export default Header;
