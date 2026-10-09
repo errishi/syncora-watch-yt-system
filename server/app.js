@@ -12,14 +12,20 @@ import { Server } from "socket.io";
 import { setUpSocketIO } from "./socket/socketManager.js";
 
 const app = express();
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "https://syncorayt.vercel.app",
+    "http://localhost:5173",
+].filter(Boolean);
 
 // Create HTTP server and Socket.IO server
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-        methods: ["GET", "POST"]
+        origin: allowedOrigins,
+        methods: ["GET", "POST"],
+        credentials: true,
     }
 });
 
@@ -29,7 +35,7 @@ app.use("/api/v1/webhooks", whookRouter);
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
