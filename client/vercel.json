@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/__clerk/:path*",
-      "destination": "https://glad-sawfish-5715.clerk.accounts.dev/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -108,7 +108,18 @@ function AppContent() {
               path="/sign-in/*"
               element={
                 <div className="flex min-h-[calc(100vh-8rem)] w-full items-center justify-center my-20">
-                  <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" />
+                  <SignIn
+                    routing="path"
+                    path="/sign-in"
+                    signUpUrl="/sign-up"
+                    localization={{
+                      signIn: {
+                        start: {
+                          title: "Sign in to Syncora",
+                        },
+                      },
+                    }}
+                  />
                 </div>
               }
             />
