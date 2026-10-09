@@ -15,7 +15,6 @@ export const clerkWebhook = async (req, res) => {
         });
     }
 
-    // Verify the webhook signature
     const svix_id = req.headers["svix-id"];
     const svix_timestamp = req.headers["svix-timestamp"];
     const svix_signature = req.headers["svix-signature"];
@@ -27,9 +26,7 @@ export const clerkWebhook = async (req, res) => {
         });
     }
 
-    // Get the raw body
     const payload = req.body.toString("utf8");
-
     let event;
 
     try {
@@ -40,11 +37,10 @@ export const clerkWebhook = async (req, res) => {
             "svix-signature": svix_signature,
         });
 
-        // parse the raw payload string into event object
         event = JSON.parse(payload);
     } catch (error) {
         console.error("Error verifying webhook:", error.message);
-        res.status(400).json({ 
+        return res.status(400).json({ 
             success: false,
             message: "Invalid webhook signature" 
         });

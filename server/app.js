@@ -25,7 +25,7 @@ const io = new Server(httpServer, {
 
 setUpSocketIO(io);
 
-app.use("/api/v1/webhooks", whookRouter);   //updated webhook api url in production
+app.use("/api/v1/webhooks", whookRouter);
 
 // Middleware
 app.use(cors({
