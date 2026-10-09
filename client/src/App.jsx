@@ -41,6 +41,7 @@ function AppContent() {
 
   return (
     <ClerkProvider
+      publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
       afterSignOutUrl="/"
       proxyUrl="/__clerk"
       routerPush={(to) => navigate(to)}
