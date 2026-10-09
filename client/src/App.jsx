@@ -42,6 +42,7 @@ function AppContent() {
   return (
     <ClerkProvider
       afterSignOutUrl="/"
+      proxyUrl="/__clerk"
       routerPush={(to) => navigate(to)}
       routerReplace={(to) => navigate(to, { replace: true })}
       appearance={{
