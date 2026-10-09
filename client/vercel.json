@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/__clerk/:path*",
-      "destination": "https://glad-sawfish-5715.clerk.accounts.dev/:path*"
+      "destination": "https://clerk.syncorayt.vercel.app/:path*"
     },
     {
       "source": "/(.*)",
