@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Users, Eye, Clock, MonitorPlay, MessageSquare, Zap, ChevronRight } from 'lucide-react';
+import { Play, Users, Eye, Clock, MonitorPlay, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { motion } from 'framer-motion';
-import HowToUse from '../components/home/howToUse';
-import Features from '../components/home/Features';
+import HowToUse from '@/components/home/HowToUse';
+import Features from '@/components/home/Features';
 
 export default function Home() {
   const rooms = [
