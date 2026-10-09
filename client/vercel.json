@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/__clerk/(.*)",
-      "destination": "https://syncorayt.vercel.app/$1"
+      "source": "/__clerk/:path*",
+      "destination": "https://syncorayt.vercel.app/:path*"
     },
     {
       "source": "/(.*)",
