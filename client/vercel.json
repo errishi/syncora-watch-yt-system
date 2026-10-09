@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/__clerk/(.*)",
+      "destination": "https://syncorayt.vercel.app/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
