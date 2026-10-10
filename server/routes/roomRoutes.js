@@ -1,7 +1,11 @@
 import express from "express";
 import { createRoom, getRoomDetails, joinRoom, getDashboardData } from "../controllers/roomController.js";
+import { requireAuth } from "../middleware/authMiddleware.js";
 
 const roomRouter = express.Router();
+
+// Apply auth middleware to all routes
+roomRouter.use(requireAuth);
 
 /**
  * @route POST /api/v1/rooms/create-room

@@ -9,6 +9,7 @@ const apiClient = axios.create({
 
 export const roomService = {
     createNewRoom: async (roomData, token) => {
+        if (!token) throw new Error("Authentication token is missing. Please try logging in again.");
         const response = await apiClient.post(`/api/v1/rooms/create-room`, roomData, {
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -16,6 +17,7 @@ export const roomService = {
     },
 
     joinRoom: async (roomData, token) => {
+        if (!token) throw new Error("Authentication token is missing. Please try logging in again.");
         const response = await apiClient.post(`/api/v1/rooms/join-room`, roomData, {
             headers: { Authorization: `Bearer ${token}` }
         });

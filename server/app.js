@@ -3,10 +3,8 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import { clerkMiddleware } from "@clerk/express";
 import connectDB from "./config/db.js";
 import roomRouter from "./routes/roomRoutes.js";
-import whookRouter from "./routes/webhookRoutes.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { setUpSocketIO } from "./socket/socketManager.js";
@@ -31,8 +29,6 @@ const io = new Server(httpServer, {
 
 setUpSocketIO(io);
 
-app.use("/api/v1/webhooks", whookRouter);
-
 // Middleware
 app.use(cors({
     origin: allowedOrigins,
@@ -41,8 +37,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(clerkMiddleware());
 
 // database connection
 connectDB();

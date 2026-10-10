@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Copy, Link as LinkIcon, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuth } from '@clerk/react';
+import { useAuth } from '../contexts/AuthContext';
 import { useRoom } from '@/hooks/useRoom';
 import { useRoomSocket } from '@/hooks/useRoomSocket';
 import VideoPlayer from '@/components/video/VideoPlayer';

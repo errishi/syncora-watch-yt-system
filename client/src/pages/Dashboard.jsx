@@ -3,7 +3,7 @@ import DashboardStats from '../components/dashboard/DashboardStats';
 import PartyHistory from '../components/dashboard/PartyHistory';
 import { motion } from 'framer-motion';
 import Header from '../components/dashboard/Header';
-import { useAuth } from '@clerk/react';
+import { useAuth } from '../contexts/AuthContext';
 import { roomService } from '../services/roomService';
 
 export default function Dashboard() {

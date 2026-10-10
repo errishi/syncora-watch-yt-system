@@ -1,4 +1,3 @@
-import { getAuth, clerkClient } from "@clerk/express";
 import roomModel from "../models/roomModel.js";
 import userModel from "../models/userModel.js";
 
@@ -12,13 +11,11 @@ const generateRoomCode = () => Math.random().toString(36).substring(2, 8).toUppe
  */
 export const createRoom = async (req, res) => {
     try {
-        const auth = getAuth(req);
-
-        if (!auth.userId) {
+        if (!req.auth || !req.auth.userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const clerkId = auth.userId;
+        const clerkId = req.auth.userId;
         const { roomName, displayName } = req.body;
         
         if (!roomName || !displayName) {
@@ -29,17 +26,11 @@ export const createRoom = async (req, res) => {
         if (!user) {
             console.log("User not found in DB. Auto-creating for testing...");
 
-            const clerkUser = await clerkClient.users.getUser(clerkId);
-    
-            const email = clerkUser.emailAddresses[0]?.emailAddress;
-            const avatar = clerkUser.imageUrl;
-            const fetchedUsername = clerkUser.username || clerkUser.firstName || email.split('@')[0];
-
             user = await userModel.create({
                 clerkId: clerkId,
-                username: displayName || fetchedUsername,
-                email: email,
-                avatar: avatar,
+                username: displayName,
+                email: req.auth.email || "unknown@supabase.com",
+                avatar: req.auth.user_metadata?.avatar_url || "",
             });
             console.log("User successfully synced to database!");
         }
@@ -84,15 +75,14 @@ export const createRoom = async (req, res) => {
 
 export const joinRoom = async (req, res) => {
     try {
-        const auth = getAuth(req);
-        if(!auth.userId) {
+        if(!req.auth || !req.auth.userId) {
             return res.status(401).json({ 
                 success: false,
                 message: "Unauthorized" 
             });
         }
 
-        const clerkId = auth.userId;
+        const clerkId = req.auth.userId;
         let { roomCode, displayName } = req.body;
 
         if (!roomCode || typeof roomCode !== "string" || roomCode.trim().length === 0) {
@@ -104,11 +94,14 @@ export const joinRoom = async (req, res) => {
 
         roomCode = roomCode.trim().toUpperCase();
 
-        const user = await userModel.findOne({ clerkId });
+        let user = await userModel.findOne({ clerkId });
         if(!user) {
-            return res.status(404).json({ 
-                success: false,
-                message: "User not found" 
+            console.log("User not found in DB during join. Auto-creating...");
+            user = await userModel.create({
+                clerkId: clerkId,
+                username: displayName || req.auth.user_metadata?.full_name || req.auth.email.split('@')[0],
+                email: req.auth.email || "unknown@supabase.com",
+                avatar: req.auth.user_metadata?.avatar_url || "",
             });
         }
 
@@ -198,8 +191,7 @@ export const joinRoom = async (req, res) => {
 
 export const getRoomDetails = async (req, res) => {
     try {
-        const auth = getAuth(req);
-        if(!auth.userId) {
+        if(!req.auth || !req.auth.userId) {
             return res.status(401).json({ 
                 success: false,
                 message: "Unauthorized" 
@@ -229,12 +221,15 @@ export const getRoomDetails = async (req, res) => {
         }
 
         // Check if the user is a participant of the room
-        const user = await userModel.findOne({ clerkId: auth.userId });
+        let user = await userModel.findOne({ clerkId: req.auth.userId });
         
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User profile not found. Please ensure you have joined the room first."
+            console.log("User not found in DB during getRoomDetails. Auto-creating...");
+            user = await userModel.create({
+                clerkId: req.auth.userId,
+                username: displayName || req.auth.user_metadata?.full_name || req.auth.email.split('@')[0],
+                email: req.auth.email || "unknown@supabase.com",
+                avatar: req.auth.user_metadata?.avatar_url || "",
             });
         }
 
@@ -324,12 +319,11 @@ export const getRoomDetails = async (req, res) => {
  */
 export const getDashboardData = async (req, res) => {
     try {
-        const auth = getAuth(req);
-        if (!auth.userId) {
+        if (!req.auth || !req.auth.userId) {
             return res.status(401).json({ success: false, message: "Unauthorized" });
         }
 
-        const user = await userModel.findOne({ clerkId: auth.userId });
+        const user = await userModel.findOne({ clerkId: req.auth.userId });
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }

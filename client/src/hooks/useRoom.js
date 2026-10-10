@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { roomService } from "../services/roomService.js";
-import { useAuth } from "@clerk/react";
+import { useAuth } from "../contexts/AuthContext";
 
 export const useRoom = () => {
     const { getToken } = useAuth();

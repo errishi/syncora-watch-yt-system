@@ -1,11 +1,11 @@
-import { useAuth } from '@clerk/react';
+import { useAuth } from '../contexts/AuthContext';
 import { Navigate, Outlet } from 'react-router-dom';
 import LoadingScreen from './LoadingScreen';
 
 export default function ProtectedRoute() {
   const { isLoaded, isSignedIn } = useAuth();
 
-  // Wait for Clerk to load the auth state
+  // Wait for Auth to load the auth state
   if (!isLoaded) {
     return (
       <LoadingScreen />
