@@ -124,6 +124,16 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
         toast.info(`${msg.sender}: ${msg.text.length > 40 ? msg.text.substring(0, 40) + '...' : msg.text}`, { id: `chat_${msg.id}` });
       };
 
+      // Handle automatic reconnections (e.g. network drops, background tabs)
+      const onConnect = () => {
+        socket.emit('join_room', {
+          roomCode: roomCode,
+          userId,
+          username: currentUsername
+        });
+      };
+
+      socket.on('connect', onConnect);
       socket.on('change_video', onChangeVideo);
       socket.on('sync_state', onSyncState);
       socket.on('user_joined', onUserJoined);
@@ -145,6 +155,7 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
           username: currentUsername
         });
 
+        socket.off('connect', onConnect);
         socket.off('change_video', onChangeVideo);
         socket.off('sync_state', onSyncState);
         socket.off('user_joined', onUserJoined);
