@@ -13,9 +13,15 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
             const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
             if (match && match[1]) {
                 setVideoId(match[1]);
-            } else {
+            } else if (url.length === 11) {
+                // Raw 11-character ID passed directly
                 setVideoId(url);
+            } else {
+                // Invalid URL or ID
+                setVideoId('');
             }
+        } else {
+            setVideoId('');
         }
     }, [url]);
 
