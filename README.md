@@ -14,7 +14,7 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/errishi/syncora-watch-yt-system
 cd Syncora-project
 ```
 
@@ -45,7 +45,7 @@ MONGO_URI=
 SUPABASE_URL=https://abcdefghijklmnopqrst.supabase.co
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIIkpXbhgcrrerxVCJ9... (your anon public key)
 # Find JWT Secret in Supabase Dashboard -> Project Settings -> API -> JWT Settings
-SUPABASE_JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
+SUPABASE_JWT_SECRET=super-secret-jwt-token
 ```
 
 4. Start the server:
