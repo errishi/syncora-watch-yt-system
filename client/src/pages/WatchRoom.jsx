@@ -45,7 +45,7 @@ export default function WatchRoom() {
     handleRemoveParticipant,
     handleEndSession,
     handleJoinRequestAction
-  } = useRoomSocket(room, userId, navigate);
+  } = useRoomSocket(room, userId, navigate, fetchRoomDetails);
 
   useEffect(() => {
     if (roomId) {

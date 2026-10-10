@@ -4,13 +4,12 @@ import { toast } from 'sonner';
 
 export const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
-export function useRoomSocket(room, userId, navigate) {
+export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
   const [videoUrl, setVideoUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
   const [messages, setMessages] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [joinRequests, setJoinRequests] = useState([]);
-  // Tracks the current user's role in real-time so UI gates (canControlVideo etc.) update instantly
   const [currentUserRole, setCurrentUserRole] = useState(null);
   const mongoUserIdRef = useRef(null);
 
@@ -36,8 +35,6 @@ export function useRoomSocket(room, userId, navigate) {
         username: currentUsername
       });
 
-      // --- Named handlers so .off() is precise and never removes other listeners ---
-
       const onChangeVideo = (payload) => {
         setVideoUrl(payload.videoId);
       };
@@ -50,7 +47,6 @@ export function useRoomSocket(room, userId, navigate) {
 
       const onUserJoined = (payload) => {
         setParticipants(payload.participants);
-        // Update own role if server corrected it on rejoin (e.g. moderator restored)
         const me = payload.participants.find(p => p.userId?.toString() === mongoUserIdRef.current);
         if (me) setCurrentUserRole(me.role);
 
@@ -68,7 +64,6 @@ export function useRoomSocket(room, userId, navigate) {
 
       const onRoleAssigned = (payload) => {
         setParticipants(payload.participants);
-        // If the role change affects ME → update currentUserRole immediately
         if (payload.userId?.toString() === mongoUserIdRef.current) {
           setCurrentUserRole(payload.role);
           toast.success(`You have been made a ${payload.role}`, { id: 'my_role_changed' });
@@ -105,8 +100,10 @@ export function useRoomSocket(room, userId, navigate) {
       };
 
       const onJoinRequestApproved = () => {
-        toast.success("Host approved your request. Rejoining...", { id: 'join_approved' });
-        setTimeout(() => window.location.reload(), 1500);
+        toast.success("Host approved your request. Joining...", { id: 'join_approved' });
+        if (fetchRoomDetails && actualRoom.roomCode) {
+            fetchRoomDetails(actualRoom.roomCode);
+        }
       };
 
       const onJoinRequestDenied = () => {
