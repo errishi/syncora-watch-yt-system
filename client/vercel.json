@@ -1,9 +1,6 @@
 {
   "rewrites": [
-    {
-      "source": "/__clerk/:path*",
-      "destination": "https://syncorayt.vercel.app/__clerk/:path"
-    },
+
     {
       "source": "/(.*)",
       "destination": "/index.html"
