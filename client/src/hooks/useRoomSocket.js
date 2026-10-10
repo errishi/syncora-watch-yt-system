@@ -24,13 +24,13 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
     }
   }, [room]);
 
-  useEffect(() => {
-    if (room?.room && userId) {
-      const actualRoom = room.room;
-      const currentUsername = room.currentUser?.username || 'Unknown';
+  const roomCode = room?.room?.roomCode;
+  const currentUsername = room?.currentUser?.username || 'Unknown';
 
+  useEffect(() => {
+    if (roomCode && userId) {
       socket.emit('join_room', {
-        roomCode: actualRoom.roomCode,
+        roomCode: roomCode,
         userId,
         username: currentUsername
       });
@@ -101,8 +101,16 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
 
       const onJoinRequestApproved = () => {
         toast.success("Host approved your request. Joining...", { id: 'join_approved' });
-        if (fetchRoomDetails && actualRoom.roomCode) {
-            fetchRoomDetails(actualRoom.roomCode);
+        
+        // Emit join_room again so the backend successfully adds us to the socket.io room
+        socket.emit('join_room', {
+          roomCode: roomCode,
+          userId,
+          username: currentUsername
+        });
+
+        if (fetchRoomDetails && roomCode) {
+            fetchRoomDetails(roomCode);
         }
       };
 
@@ -132,7 +140,7 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
 
       return () => {
         socket.emit('leave_room', {
-          roomCode: actualRoom.roomCode,
+          roomCode: roomCode,
           userId,
           username: currentUsername
         });
@@ -152,7 +160,7 @@ export function useRoomSocket(room, userId, navigate, fetchRoomDetails) {
         socket.off('chat_message', onChatMessage);
       };
     };
-  }, [room, userId, navigate]);
+  }, [roomCode, userId, navigate]);
 
   const handleUrlChange = (e) => {
     e.preventDefault();
