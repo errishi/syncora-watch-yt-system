@@ -43,7 +43,6 @@ function AppContent() {
     <ClerkProvider
       publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
       afterSignOutUrl="/"
-      proxyUrl="https://syncorayt.vercel.app/__clerk"
       routerPush={(to) => navigate(to)}
       routerReplace={(to) => navigate(to, { replace: true })}
       appearance={{
