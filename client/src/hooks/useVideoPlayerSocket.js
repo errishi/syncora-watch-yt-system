@@ -4,6 +4,7 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
     const playerRef = useRef(null);
     const isRemoteAction = useRef(false); // Prevents infinite WebSocket loops
     const lastKnownPlayState = useRef('paused'); // Tracks the true room state
+    const hasInitialSync = useRef(false); // Prevents broadcasting fake events on mount
     const [videoId, setVideoId] = useState('');
 
     // YouTube ID URL formats
@@ -13,7 +14,6 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
             if (match && match[1]) {
                 setVideoId(match[1]);
             } else {
-                // Fallback in case the raw 11-character ID was passed directly
                 setVideoId(url);
             }
         }
@@ -61,6 +61,7 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
 
         const handleSyncState = ({ playState, currentTime }) => {
             if (playerRef.current) {
+                hasInitialSync.current = true;
                 lastKnownPlayState.current = playState;
                 isRemoteAction.current = true;
                 playerRef.current.seekTo(currentTime, true);
@@ -90,7 +91,6 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
     useEffect(() => {
         const handleVisibilityChange = () => {
             if (!document.hidden && socket && roomCode) {
-                // Request the true state from the server to re-sync when tab is visible again
                 socket.emit("request_sync", { roomCode });
             }
         };
@@ -104,22 +104,19 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
     //YouTube Player Event Handlers (Broadcasting to others)
     const onReady = (event) => {
         playerRef.current = event.target;
-        // If the player remounts (e.g. controls changed) and they don't have permission,
-        // force unmute because YouTube might remember their muted state via local storage
         if (!canControlVideo) {
             event.target.unMute();
             event.target.setVolume(100);
         }
         
-        // As soon as the player is ready, ask the server for the true state 
-        // to prevent auto-play from diverging if we missed the initial sync
         if (socket && roomCode) {
             socket.emit("request_sync", { roomCode });
         }
     };
 
     const onPlay = (event) => {
-        // If this play event was triggered by the socket, ignore it to prevent a loop
+        if (!canControlVideo || !hasInitialSync.current) return;
+        
         if (isRemoteAction.current) {
             isRemoteAction.current = false;
             return;
@@ -129,13 +126,13 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
     };
 
     const onPause = (event) => {
+        if (!canControlVideo || !hasInitialSync.current) return;
+        
         if (isRemoteAction.current) {
             isRemoteAction.current = false;
             return;
         }
         
-        // If the browser auto-paused because the user switched tabs, 
-        // force it to keep playing ONLY if the room state is actually playing
         if (document.hidden && lastKnownPlayState.current === 'playing') {
             isRemoteAction.current = true;
             event.target.playVideo();
