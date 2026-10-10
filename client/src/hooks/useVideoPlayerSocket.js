@@ -159,6 +159,7 @@ export function useVideoPlayerSocket({ url, socket, roomCode, userId, canControl
             rel: 0,
             controls: canControlVideo ? 1 : 0,
             disablekb: canControlVideo ? 0 : 1,
+            origin: window.location.origin,
         },
     }), [canControlVideo]);
 
