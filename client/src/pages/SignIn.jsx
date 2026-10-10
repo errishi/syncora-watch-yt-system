@@ -19,7 +19,7 @@ export default function SignIn() {
     e.preventDefault();
     setLoading(true);
     setNeedsVerification(false);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -31,6 +31,11 @@ export default function SignIn() {
       } else {
         toast.error(error.message);
       }
+    } else if (data?.user && !data.user.email_confirmed_at) {
+      // Strictly enforce email verification on the client side
+      await supabase.auth.signOut();
+      setNeedsVerification(true);
+      toast.error('Please verify your email address to sign in.');
     } else {
       toast.success('Signed in successfully');
       navigate('/dashboard');
@@ -43,6 +48,9 @@ export default function SignIn() {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      }
     });
     
     if (error) {
