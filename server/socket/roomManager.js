@@ -280,15 +280,27 @@ export const setupRoomEvents = (socket, io) => {
                     role: "participant"
                 };
 
-                await roomModel.findOneAndUpdate(
+                const updatedRoom = await roomModel.findOneAndUpdate(
                     { roomCode },
                     { 
                         $pull: { bannedUsers: targetParticipantId },
                         $addToSet: { historicalParticipants: targetParticipantId },
                         $push: { participants: joinedUser }
-                    }
+                    },
+                    { new: true }
                 );
+                
                 io.to(targetSocketId).emit("join_request_approved");
+                
+                // Immediately broadcast to the room so the host sees them in the list instantly
+                if (updatedRoom) {
+                    io.in(roomCode).emit("user_joined", { 
+                        userId: requesterId, // Using host's ID just to trigger the update
+                        username: targetUsername || "User",
+                        role: "participant",
+                        participants: updatedRoom.participants 
+                    });
+                }
             } else {
                 io.to(targetSocketId).emit("join_request_denied");
             }
